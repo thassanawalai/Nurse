@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แบบประเมินสุขภาพจิต | ระบบดูแลใจ</title>
+  <style>
+    :root {
+      --primary-color: #455E9B;
+      --secondary-color: #FFF2D6;
+      --accent-color: #FF6B6B;
+      --text-color: #FFFFFF;
+      --light-gray: rgba(255, 255, 255, 0.1);
+      --border-radius: 12px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-image: url('C:\Users\Administrator\Desktop\mental-health-app\background.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+      width: 100%;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .page {
+      display: none;
+      flex-direction: column;
+      flex-grow: 1;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .page.active {
+      display: flex;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-top: 20px;
+    }
+    
+    .header h1 {
+      color: var(--text-color);
+      margin-bottom: 10px;
+      font-size: 28px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .header h1::after {
+      content: "";
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background-color: var(--accent-color);
+    }
+    
+    .question-container {
+      background-color: var(--light-gray);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      border-left: 5px solid var(--primary-color);
+      backdrop-filter: blur(5px);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .question-text {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 30px;
+      color: var(--text-color);
+    }
+    
+    .options-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    
+    .option-btn {
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+      background-color: var(--light-gray);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    .option-btn:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(69, 94, 155, 0.3);
+    }
+    
+    .option-btn.selected {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 30px;
+    }
+    
+    .nav-btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .prev-btn {
+      background-color: var(--light-gray);
+      color: var(--text-color);
+    }
+    
+    .prev-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .next-btn {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .next-btn:hover {
+      background-color: #3a4a7d;
+    }
+    
+    .page-indicator {
+      text-align: center;
+      margin-top: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+    }
+    
+    /* เพลงพื้นหลัง */
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 1000;
+    }
+    
+    .music-control i {
+      color: white;
+      font-size: 24px;
+    }
+    
+    /* อนิเมชัน */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* ส่วนข้อมูลส่วนตัว */
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+      background-color: var(--light-gray);
+      color: white;
+      margin-bottom: 15px;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    
+    /* ผลลัพธ์ */
+    .result-score {
+      font-size: 36px;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin: 10px 0;
+    }
+    
+    .result-message {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: var(--border-radius);
+      border-left: 3px solid var(--accent-color);
+    }
+
+    /* ส่วนเพิ่มเติมสำหรับแบบประเมิน 2Q, 9Q, 8Q */
+    .feeling-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .feeling-option {
+      padding: 15px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--border-radius);
+      background-color: var(--light-gray);
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+    }
+    
+    .feeling-option:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(69, 94, 155, 0.3);
+    }
+    
+    .feeling-option.selected {
+      background-color: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .checkbox-option input {
+      margin-right: 10px;
+    }
+    
+    .quote {
+      font-style: italic;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: var(--border-radius);
+      margin-bottom: 15px;
+      border-left: 3px solid var(--accent-color);
+    }
+    
+    .help-contacts {
+      margin-top: 30px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: var(--border-radius);
+    }
+    
+    .help-contacts h3 {
+      color: var(--accent-color);
+      margin-bottom: 10px;
+    }
+    
+    .help-contacts ul {
+      margin-left: 20px;
+    }
+    
+    .help-contacts li {
+      margin-bottom: 8px;
+    }
+    
+    /* สไตล์สำหรับผลลัพธ์ระดับต่างๆ */
+    .result-level-1 {
+      background-color: rgba(69, 94, 155, 0.3);
+      border-left: 5px solid #4CAF50;
+    }
+    
+    .result-level-2 {
+      background-color: rgba(255, 193, 7, 0.3);
+      border-left: 5px solid #FFC107;
+    }
+    
+    .result-level-3 {
+      background-color: rgba(255, 87, 34, 0.3);
+      border-left: 5px solid #FF5722;
+    }
+    
+    .result-level-4 {
+      background-color: rgba(244, 67, 54, 0.3);
+      border-left: 5px solid #F44336;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- เพลงพื้นหลัง -->
+  <audio id="bg-music" loop>
+    <source src="C:\Users\Administrator\Desktop\mental-health-app\music.mp3" type="audio/mpeg">
+  </audio>
+  
+  <div class="music-control" id="music-control">
+    <i class="fas fa-music"></i>
+  </div>
+
+  <div class="container">
+    <!-- หน้าแรก -->
+    <div class="page active" id="welcome-page">
+      <div class="header">
+        <h1>แบบประเมินสุขภาพจิต</h1>
+        <p>พื้นที่ปลอดภัยสำหรับการฟังเสียงภายในใจของคุณ</p>
+      </div>
+      
+      <div class="question-container">
+        <div style="text-align: center; margin: 20px 0;">
+          <i class="fas fa-heart" style="font-size: 60px; color: var(--accent-color);"></i>
+        </div>
+        
+        <p style="text-align: center; margin-bottom: 30px;">แบบประเมินนี้ไม่มีคำตอบที่ผิดหรือถูก เราอยากชวนคุณใช้เวลาสั้นๆ ในการทบทวนตัวเอง</p>
+        
+        <button id="start-btn" class="next-btn" style="width: 100%;">
+          เริ่มทำแบบประเมิน <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- หน้าข้อมูลส่วนตัว -->
+    <div class="page" id="personal-info-page">
+      <div class="header">
+        <h1>ให้เรารู้จักคุณในแบบที่คุณสบายใจ</h1>
+      </div>
+      
+      <div class="question-container">
+        <div class="question-text">คุณอยากให้เราเรียกคุณว่าอะไรดี? (ชื่อเล่น หรือนามแฝงก็ได้นะ)</div>
+        <input type="text" id="nickname" class="form-input" placeholder="กรุณากรอกชื่อเล่น">
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-welcome"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-next-personal">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าข้อมูลส่วนตัว (อายุ) -->
+    <div class="page" id="personal-age-page">
+      <div class="question-container">
+        <div class="question-text">อายุของคุณ</div>
+        <input type="number" id="age" class="form-input" placeholder="กรุณากรอกอายุ">
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-personal-info"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-gender-page">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าข้อมูลส่วนตัว (เพศ) -->
+    <div class="page" id="gender-page">
+      <div class="question-container">
+        <div class="question-text">เราอยากรู้จักคุณในแบบที่คุณรู้สึกเป็นตัวเอง</div>
+        <select id="gender" class="form-input">
+          <option value="" disabled selected>เลือกเพศที่คุณรู้สึก</option>
+          <option>ฉันเป็นผู้หญิง</option>
+          <option>ฉันเป็นผู้ชาย</option>
+          <option>ฉันคือ LGBTQ+</option>
+          <option>ฉันยังไม่แน่ใจ</option>
+          <option>ฉันยังไม่อยากระบุตอนนี้</option>
+        </select>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-age-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-occupation-page">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าข้อมูลส่วนตัว (อาชีพ) -->
+    <div class="page" id="occupation-page">
+      <div class="question-container">
+        <div class="question-text">ตอนนี้คุณใช้เวลาทำอะไรเป็นหลัก? เช่น งานประจำ งานอิสระ งานบ้าน งานใจ หรืออะไรก็ได้ที่คุณเรียกว่า 'หน้าที่' ของตัวเองในช่วงนี้</div>
+        <input type="text" id="occupation" class="form-input" placeholder="">
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-gender-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-reflection-page">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ส่วนสะท้อนความรู้สึกก่อนเริ่มแบบประเมิน -->
+    <div class="page" id="reflection-page">
+      <div class="question-container">
+        <div class="question-text">ขณะที่เสียงค่อย ๆ ไหลผ่านใจคุณ เราอยากชวนคุณอ่านข้อความพวกนี้ทีละประโยค ไม่ต้องรีบ หรือ "เข้าใจ" ทั้งหมด แต่สังเกตว่า ประโยคไหน "ตรงกับความรู้สึกคุณบ้าง"</div>
+        
+        <div class="feeling-options">
+          <div class="feeling-option" data-value="1">"บางที...เราอาจไม่ต้องแข็งแรงตลอดเวลาก็ได้"</div>
+          <div class="feeling-option" data-value="2">"ฉันไม่ได้แปลก ฉันแค่เหนื่อย"</div>
+          <div class="feeling-option" data-value="3">"ถ้าหัวใจฉันพูดได้ มันคงแค่อยากให้มีใครฟัง โดยไม่รีบตอบ"</div>
+          <div class="feeling-option" data-value="4">"ฉันยังอยู่ตรงนี้... และนั่นก็คือจุดเริ่มต้นแล้ว"</div>
+        </div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-occupation-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-feeling-page">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ส่วนความรู้สึกขณะอ่านข้อความ -->
+    <div class="page" id="feeling-page">
+      <div class="question-container">
+        <div class="question-text">ขณะคุณอ่านข้อความเหล่านี้...คุณรู้สึกอะไรที่เกิดขึ้นภายในจิตใจของคุณ? (เลือกได้มากกว่าหนึ่งข้อ)</div>
+        
+        <div class="checkbox-option">
+          <input type="checkbox" id="feeling1" name="feelings" value="1">
+          <label for="feeling1">เหมือนมันพูดแทนในสิ่งที่ยังไม่กล้าพูด</label>
+        </div>
+        <div class="checkbox-option">
+          <input type="checkbox" id="feeling2" name="feelings" value="2">
+          <label for="feeling2">รู้สึกเบาขึ้นบ้างหน่อย</label>
+        </div>
+        <div class="checkbox-option">
+          <input type="checkbox" id="feeling3" name="feelings" value="3">
+          <label for="feeling3">ยังไม่แน่ใจ แต่ก็อยากลองอยู่กับความรู้สึกนี้ต่อ</label>
+        </div>
+        <div class="checkbox-option">
+          <input type="checkbox" id="feeling4" name="feelings" value="4">
+          <label for="feeling4">เครียดบ้างหน่อย แต่ไม่เป็นไร</label>
+        </div>
+        <div class="checkbox-option">
+          <input type="checkbox" id="feeling5" name="feelings" value="5">
+          <label for="feeling5">ไม่รู้จะรู้สึกยังไงดี</label>
+        </div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-reflection-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-page1">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- คำถาม ST-5 ข้อ 1 -->
+    <div class="page" id="st5-page1">
+      <div class="question-container">
+        <div class="question-text">1. คุณรู้สึกนอนไม่หลับ หรือนอนไม่พอ</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">ไม่เลย</button>
+          <button class="option-btn" data-value="1">เล็กน้อย</button>
+          <button class="option-btn" data-value="2">ปานกลาง</button>
+          <button class="option-btn" data-value="3">มาก</button>
+          <button class="option-btn" data-value="4">มากที่สุด</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 1 จาก 5 (ST-5)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-feeling-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-page2">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- คำถาม ST-5 ข้อ 2 -->
+    <div class="page" id="st5-page2">
+      <div class="question-container">
+        <div class="question-text">2. คุณรู้สึกเบื่อ เฉย ๆ หรือไม่สนใจสิ่งที่เคยชอบ</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">ไม่เลย</button>
+          <button class="option-btn" data-value="1">เล็กน้อย</button>
+          <button class="option-btn" data-value="2">ปานกลาง</button>
+          <button class="option-btn" data-value="3">มาก</button>
+          <button class="option-btn" data-value="4">มากที่สุด</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 2 จาก 5 (ST-5)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-page1"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-page3">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- คำถาม ST-5 ข้อ 3 -->
+    <div class="page" id="st5-page3">
+      <div class="question-container">
+        <div class="question-text">3. คุณรู้สึกกังวล เครียด หรือหงุดหงิด</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">ไม่เลย</button>
+          <button class="option-btn" data-value="1">เล็กน้อย</button>
+          <button class="option-btn" data-value="2">ปานกลาง</button>
+          <button class="option-btn" data-value="3">มาก</button>
+          <button class="option-btn" data-value="4">มากที่สุด</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 3 จาก 5 (ST-5)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-page2"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-page4">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- คำถาม ST-5 ข้อ 4 -->
+    <div class="page" id="st5-page4">
+      <div class="question-container">
+        <div class="question-text">4. คุณรู้สึกเหนื่อย ท้อ หรือหมดแรง</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">ไม่เลย</button>
+          <button class="option-btn" data-value="1">เล็กน้อย</button>
+          <button class="option-btn" data-value="2">ปานกลาง</button>
+          <button class="option-btn" data-value="3">มาก</button>
+          <button class="option-btn" data-value="4">มากที่สุด</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 4 จาก 5 (ST-5)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-page3"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-page5">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- คำถาม ST-5 ข้อ 5 -->
+    <div class="page" id="st5-page5">
+      <div class="question-container">
+        <div class="question-text">5. คุณรู้สึกไร้ค่า หรือเหมือนไม่มีใครเข้าใจ</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">ไม่เลย</button>
+          <button class="option-btn" data-value="1">เล็กน้อย</button>
+          <button class="option-btn" data-value="2">ปานกลาง</button>
+          <button class="option-btn" data-value="3">มาก</button>
+          <button class="option-btn" data-value="4">มากที่สุด</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 5 จาก 5 (ST-5)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-page4"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-st5-result">ดูผลประเมิน <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าผลประเมิน ST-5 และตัดสินใจไปต่อหรือไม่ -->
+    <div class="page" id="st5-result-page">
+      <div class="question-container">
+        <div class="result-score" id="st5-score">0</div>
+        <div class="result-message" id="st5-message"></div>
+        
+        <div id="st5-next-step" style="margin-top: 20px;">
+          <!-- จะแสดงเนื้อหาตามผลลัพธ์ ST-5 -->
+        </div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-page5"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-2q-page" style="display: none;">ทำแบบประเมินต่อ <i class="fas fa-arrow-right"></i></button>
+          <button class="nav-btn next-btn" id="to-final-result" style="display: none;">ดูผลประเมินสรุป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- แบบประเมิน 2Q -->
+    <div class="page" id="2q-page">
+      <div class="question-container">
+        <div class="question-text">ใน 2 สัปดาห์ที่ผ่านมา ความรู้สึกภายในจิตใจคุณเป็นอย่างไร?</div>
+        
+        <div class="checkbox-option">
+          <input type="checkbox" id="2q1" name="2q" value="1">
+          <label for="2q1">1. คุณรู้สึกท้อแท้ เศร้า หรือสิ้นหวัง</label>
+        </div>
+        <div class="checkbox-option">
+          <input type="checkbox" id="2q2" name="2q" value="2">
+          <label for="2q2">2. คุณรู้สึกเบื่อ ทำอะไรก็ไม่เพลิดเพลิน</label>
+        </div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-st5-result-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-2q-result">ดูผลประเมิน <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าผลประเมิน 2Q และตัดสินใจไปต่อหรือไม่ -->
+    <div class="page" id="2q-result-page">
+      <div class="question-container">
+        <div class="result-message" id="2q-message"></div>
+        
+        <div id="2q-next-step" style="margin-top: 20px;">
+          <!-- จะแสดงเนื้อหาตามผลลัพธ์ 2Q -->
+        </div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-2q-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-9q-page" style="display: none;">ทำแบบประเมินต่อ <i class="fas fa-arrow-right"></i></button>
+          <button class="nav-btn next-btn" id="to-final-result-from-2q" style="display: none;">ดูผลประเมินสรุป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- แบบประเมิน 9Q -->
+    <div class="page" id="9q-page">
+      <div class="question-container">
+        <div class="question-text">แบบประเมินภาวะซึมเศร้า (ช่วง 2 สัปดาห์ที่ผ่านมา ให้คะแนนแต่ละข้อ)<br>
+        0 = ไม่มีเลย | 1 = บางวัน 1-7 วัน | 2 = เป็นบ่อย >7 วัน | 3 = เป็นทุกวัน</div>
+        
+        <div class="question-text">1. รู้สึกเบื่อ หรือไม่สนใจสิ่งที่เคยชอบ</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">2. รู้สึกเศร้า สิ้นหวัง หรือหมดหวัง</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">3. มีปัญหาเกี่ยวกับการนอน (นอนไม่หลับหรือนอนมากผิดปกติ)</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">4. รู้สึกเหนื่อย ไม่มีแรง</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">5. เบื่ออาหาร หรือกินมากผิดปกติ</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 1-5 จาก 9 (9Q)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-2q-result-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-9q-page2">ต่อไป <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้า 2 ของแบบประเมิน 9Q -->
+    <div class="page" id="9q-page2">
+      <div class="question-container">
+        <div class="question-text">แบบประเมินภาวะซึมเศร้า (ช่วง 2 สัปดาห์ที่ผ่านมา ให้คะแนนแต่ละข้อ)<br>
+        0 = ไม่มีเลย | 1 = บางวัน 1-7 วัน | 2 = เป็นบ่อย >7 วัน | 3 = เป็นทุกวัน</div>
+        
+        <div class="question-text">6. รู้สึกไม่ดีกับตัวเอง รู้สึกล้มเหลว หรือรู้สึกผิด</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">7. สมาธิไม่ดี คิดไม่ออก หลงลืม</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">8. เคลื่อนไหวช้าลง หรืออยู่ไม่สุขจนคนรอบข้างสังเกตได้</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="question-text">9. มีความคิดอยากตาย หรืออยากหายไปจากโลกนี้</div>
+        <div class="options-container">
+          <button class="option-btn" data-value="0">0 - ไม่มีเลย</button>
+          <button class="option-btn" data-value="1">1 - บางวัน</button>
+          <button class="option-btn" data-value="2">2 - เป็นบ่อย</button>
+          <button class="option-btn" data-value="3">3 - เป็นทุกวัน</button>
+        </div>
+        
+        <div class="page-indicator">คำถามที่ 6-9 จาก 9 (9Q)</div>
+        
+        <div class="nav-buttons">
+          <button class="nav-btn prev-btn" id="back-to-9q-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+          <button class="nav-btn next-btn" id="to-9q-result">ดูผลประเมิน <i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- หน้าผลประเมิน 9Q และตัดสินใจไปต่อหรือไม่ -->
+    <div class="page" id="9q-result-page">
+      <div class="question-container">
+        <div class="result-score" id="9q-score">0</div>
+        <div class="result-message" id="9q-message"></div>
+        
+        <div id="9q-next-step" style="margin-top: 20px;">
+          <!-- จะแสดงเนื้อหาตามผลลัพธ์ 9Q -->
+</div>
+
+<div class="nav-buttons">
+  <button class="nav-btn prev-btn" id="back-to-9q-page2"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+  <button class="nav-btn next-btn" id="to-8q-page" style="display: none;">ทำแบบประเมินต่อ <i
+      class="fas fa-arrow-right"></i></button>
+  <button class="nav-btn next-btn" id="to-final-result-from-9q" style="display: none;">ดูผลประเมินสรุป <i
+      class="fas fa-arrow-right"></i></button>
+</div>
+</div>
+</div>
+
+<!-- แบบประเมิน 8Q -->
+<div class="page" id="8q-page">
+  <div class="question-container">
+    <div class="question-text">แบบประเมินแนวโน้มการฆ่าตัวตาย (8Q)</div>
+
+    <div class="question-text">1. ในช่วง 2 สัปดาห์ที่ผ่านมา คุณมีความคิดอยากตายหรือไม่อยากมีชีวิตอยู่บ้างไหม?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่เคยคิด</button>
+      <button class="option-btn" data-value="1">คิดบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">คิดค่อนข้างบ่อย</button>
+      <button class="option-btn" data-value="3">คิดเกือบทุกวัน</button>
+    </div>
+
+    <div class="question-text">2. คุณเคยวางแผนหรือคิดวิธีที่จะฆ่าตัวตายหรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่เคยคิด</button>
+      <button class="option-btn" data-value="1">คิดบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">คิดค่อนข้างบ่อย</button>
+      <button class="option-btn" data-value="3">คิดเกือบทุกวัน</button>
+    </div>
+
+    <div class="question-text">3. คุณเคยทำร้ายตัวเองหรือพยายามฆ่าตัวตายมาก่อนหรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่เคย</button>
+      <button class="option-btn" data-value="1">เคยคิดแต่ไม่ได้ทำ</button>
+      <button class="option-btn" data-value="2">เคยทำร้ายตัวเองเล็กน้อย</button>
+      <button class="option-btn" data-value="3">เคยพยายามฆ่าตัวตาย</button>
+    </div>
+
+    <div class="page-indicator">คำถามที่ 1-3 จาก 8 (8Q)</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="back-to-9q-result-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+      <button class="nav-btn next-btn" id="to-8q-page2">ต่อไป <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้า 2 ของแบบประเมิน 8Q -->
+<div class="page" id="8q-page2">
+  <div class="question-container">
+    <div class="question-text">แบบประเมินแนวโน้มการฆ่าตัวตาย (8Q)</div>
+
+    <div class="question-text">4. คุณรู้สึกว่าชีวิตไม่มีความหมายหรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่รู้สึก</button>
+      <button class="option-btn" data-value="1">รู้สึกบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">รู้สึกค่อนข้างมาก</button>
+      <button class="option-btn" data-value="3">รู้สึกมากที่สุด</button>
+    </div>
+
+    <div class="question-text">5. คุณรู้สึกว่าตัวเองเป็นภาระของคนอื่นหรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่รู้สึก</button>
+      <button class="option-btn" data-value="1">รู้สึกบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">รู้สึกค่อนข้างมาก</button>
+      <button class="option-btn" data-value="3">รู้สึกมากที่สุด</button>
+    </div>
+
+    <div class="question-text">6. คุณรู้สึกว่าคนรอบข้างจะดีขึ้นถ้าคุณไม่อยู่หรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่รู้สึก</button>
+      <button class="option-btn" data-value="1">รู้สึกบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">รู้สึกค่อนข้างมาก</button>
+      <button class="option-btn" data-value="3">รู้สึกมากที่สุด</button>
+    </div>
+
+    <div class="page-indicator">คำถามที่ 4-6 จาก 8 (8Q)</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="back-to-8q-page"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+      <button class="nav-btn next-btn" id="to-8q-page3">ต่อไป <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้า 3 ของแบบประเมิน 8Q -->
+<div class="page" id="8q-page3">
+  <div class="question-container">
+    <div class="question-text">แบบประเมินแนวโน้มการฆ่าตัวตาย (8Q)</div>
+
+    <div class="question-text">7. คุณรู้สึกว่าตัวเองไม่มีทางออกจากปัญหาหรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่รู้สึก</button>
+      <button class="option-btn" data-value="1">รู้สึกบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">รู้สึกค่อนข้างมาก</button>
+      <button class="option-btn" data-value="3">รู้สึกมากที่สุด</button>
+    </div>
+
+    <div class="question-text">8. คุณรู้สึกว่าตัวเองไม่สามารถรับมือกับปัญหาที่เกิดขึ้นได้หรือไม่?</div>
+    <div class="options-container">
+      <button class="option-btn" data-value="0">ไม่รู้สึก</button>
+      <button class="option-btn" data-value="1">รู้สึกบ้างเล็กน้อย</button>
+      <button class="option-btn" data-value="2">รู้สึกค่อนข้างมาก</button>
+      <button class="option-btn" data-value="3">รู้สึกมากที่สุด</button>
+    </div>
+
+    <div class="page-indicator">คำถามที่ 7-8 จาก 8 (8Q)</div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="back-to-8q-page2"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+      <button class="nav-btn next-btn" id="to-8q-result">ดูผลประเมิน <i class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้าผลประเมิน 8Q -->
+<div class="page" id="8q-result-page">
+  <div class="question-container">
+    <div class="result-score" id="8q-score">0</div>
+    <div class="result-message" id="8q-message"></div>
+
+    <div class="help-contacts">
+      <h3>หากคุณมีความคิดอยากทำร้ายตัวเอง โปรดติดต่อ:</h3>
+      <ul>
+        <li>สายด่วนสุขภาพจิต 1323</li>
+        <li>สมาคมสะมาริตันส์ 02-713-6793</li>
+        <li>โรงพยาบาลหัวเฉียว 08-9601-0089</li>
+        <li>ศูนย์สุขภาพแห่งมหาวิทยาลัยหัวเฉียวเฉลิมพระเกียรติ</li>
+      </ul>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="back-to-8q-page3"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+      <button class="nav-btn next-btn" id="to-final-result-from-8q">ดูผลประเมินสรุป <i
+          class="fas fa-arrow-right"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- หน้าผลประเมินสรุป -->
+<div class="page" id="final-result-page">
+  <div class="question-container">
+    <div class="header">
+      <h1>ผลประเมินสุขภาพจิตของคุณ</h1>
+    </div>
+
+    <div id="final-result-content">
+      <!-- จะแสดงเนื้อหาตามผลลัพธ์ทั้งหมด -->
+    </div>
+
+    <div class="help-contacts">
+      <h3>ช่องทางการติดต่อหากต้องการความช่วยเหลือ</h3>
+      <ul>
+        <li>สายด่วนสุขภาพจิต: 1323</li>
+        <li>สมาคมสะมาริตันส์: 02-713-6793</li>
+        <li>โรงพยาบาลหัวเฉียว: 08-9601-0089</li>
+        <li>ศูนย์สุขภาพแห่งมหาวิทยาลัยหัวเฉียวเฉลิมพระเกียรติ</li>
+        <li>เว็บไซต์ Mental Health Thailand: <a href="https://www.dmh.go.th"
+            style="color: var(--accent-color);">www.dmh.go.th</a></li>
+      </ul>
+    </div>
+
+    <div class="quote">
+      "สุขภาพจิตที่ดี ย่อมเป็นพื้นฐานของสุขภาพกายที่แข็งแรง"<br>
+      - พระราชดำรัส พระบาทสมเด็จพระบรมชนกาธิเบศร มหาภูมิพลอดุลยเดชมหาราช บรมนาถบพิตร
+    </div>
+
+    <div class="nav-buttons">
+      <button class="nav-btn prev-btn" id="back-to-previous-result"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+      <button class="nav-btn next-btn" id="restart-assessment">ทำแบบประเมินใหม่ <i class="fas fa-redo"></i></button>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+  // ตัวแปรเก็บข้อมูลการประเมิน
+  const assessmentData = {
+    personalInfo: {
+      nickname: '',
+      age: '',
+      gender: '',
+      occupation: ''
+    },
+    reflection: {
+      selectedQuote: '',
+      feelings: []
+    },
+    st5: {
+      q1: null,
+      q2: null,
+      q3: null,
+      q4: null,
+      q5: null,
+      total: 0,
+      level: ''
+    },
+    twoQ: {
+      q1: false,
+      q2: false,
+      hasRisk: false
+    },
+    nineQ: {
+      q1: null,
+      q2: null,
+      q3: null,
+      q4: null,
+      q5: null,
+      q6: null,
+      q7: null,
+      q8: null,
+      q9: null,
+      total: 0,
+      level: ''
+    },
+    eightQ: {
+      q1: null,
+      q2: null,
+      q3: null,
+      q4: null,
+      q5: null,
+      q6: null,
+      q7: null,
+      q8: null,
+      total: 0,
+      level: ''
+    }
+  };
+
+  // ฟังก์ชันเปลี่ยนหน้า
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+    });
+    document.getElementById(pageId).classList.add('active');
+  }
+
+  // ฟังก์ชันคำนวณคะแนน ST-5
+  function calculateST5Score() {
+    assessmentData.st5.total = assessmentData.st5.q1 + assessmentData.st5.q2 + assessmentData.st5.q3 + assessmentData.st5.q4 + assessmentData.st5.q5;
+
+    if (assessmentData.st5.total <= 4) {
+      assessmentData.st5.level = 'น้อย';
+    } else if (assessmentData.st5.total <= 7) {
+      assessmentData.st5.level = 'ปานกลาง';
+    } else if (assessmentData.st5.total <= 9) {
+      assessmentData.st5.level = 'มาก';
+    } else {
+      assessmentData.st5.level = 'มากที่สุด';
+    }
+
+    document.getElementById('st5-score').textContent = assessmentData.st5.total;
+    const st5Message = document.getElementById('st5-message');
+    const nextStep = document.getElementById('st5-next-step');
+
+    if (assessmentData.st5.total <= 7) {
+      st5Message.innerHTML = `
+          <h3>ระดับความเครียด: ${assessmentData.st5.level}</h3>
+          <p>จากคำตอบที่คุณให้มา ดูเหมือนว่าคุณยังสามารถรับมือกับความเครียดได้ดีอยู่</p>
+          <p>แต่ถึงแม้ทุกอย่างดูเหมือนจะโอเค คุณก็ยังมีสิทธิ์เหนื่อย มีสิทธิ์พัก และมีสิทธิ์พูดว่า "ไม่ไหว" ได้เสมอ</p>
+        `;
+      nextStep.innerHTML = `
+          <div class="result-message result-level-1">
+            <p>คุณสามารถจบการประเมินที่นี่ หรือทำต่อเพื่อประเมินภาวะซึมเศร้าเบื้องต้น</p>
+          </div>
+        `;
+      document.getElementById('to-final-result').style.display = 'inline-block';
+      document.getElementById('to-2q-page').style.display = 'inline-block';
+    } else {
+      st5Message.innerHTML = `
+          <h3>ระดับความเครียด: ${assessmentData.st5.level}</h3>
+          <p>จากคำตอบที่คุณให้มา ดูเหมือนว่าคุณกำลังเผชิญกับความเครียดระดับสูง</p>
+          <p>เราอยากชวนคุณทำแบบประเมินต่อเพื่อประเมินภาวะซึมเศร้าเบื้องต้น</p>
+        `;
+      nextStep.innerHTML = `
+          <div class="result-message result-level-2">
+            <p>โปรดทำแบบประเมินต่อเพื่อประเมินภาวะซึมเศร้าเบื้องต้น</p>
+          </div>
+        `;
+      document.getElementById('to-final-result').style.display = 'none';
+      document.getElementById('to-2q-page').style.display = 'inline-block';
+    }
+  }
+
+  // ฟังก์ชันคำนวณคะแนน 2Q
+  function calculate2QScore() {
+    assessmentData.twoQ.hasRisk = assessmentData.twoQ.q1 || assessmentData.twoQ.q2;
+
+    const twoQMessage = document.getElementById('2q-message');
+    const nextStep = document.getElementById('2q-next-step');
+
+    if (!assessmentData.twoQ.hasRisk) {
+      twoQMessage.innerHTML = `
+          <h3>ผลประเมิน 2Q</h3>
+          <p>จากคำตอบของคุณตอนนี้ยังไม่พบสัญญาณที่เข้าข่ายภาวะซึมเศร้า</p>
+          <p>แต่นั่นไม่ได้แปลว่าคุณต้องรู้สึกดีตลอดเวลา การเผชิญปัญหาและการจัดการอารมณ์ได้ดี เป็นสิ่งที่ดี</p>
+        `;
+      nextStep.innerHTML = `
+          <div class="result-message result-level-1">
+            <p>คุณสามารถจบการประเมินที่นี่ได้</p>
+          </div>
+        `;
+      document.getElementById('to-final-result-from-2q').style.display = 'inline-block';
+      document.getElementById('to-9q-page').style.display = 'none';
+    } else {
+      twoQMessage.innerHTML = `
+          <h3>ผลประเมิน 2Q</h3>
+          <p>จากคำตอบของคุณ...ดูเหมือนภายในใจของคุณกำลังบอกอะไรบางอย่างกับเรา</p>
+          <p>บางที คุณอาจกำลังต้องการให้ใครสักคน "ที่รับฟังอย่างเข้าใจ"</p>
+        `;
+      nextStep.innerHTML = `
+          <div class="result-message result-level-2">
+            <p>โปรดทำแบบประเมินต่อเพื่อประเมินภาวะซึมเศร้า (9Q)</p>
+          </div>
+        `;
+      document.getElementById('to-final-result-from-2q').style.display = 'none';
+      document.getElementById('to-9q-page').style.display = 'inline-block';
+    }
+  }
+
+  // ฟังก์ชันคำนวณคะแนน 9Q
+  function calculate9QScore() {
+    assessmentData.nineQ.total = assessmentData.nineQ.q1 + assessmentData.nineQ.q2 + assessmentData.nineQ.q3 +
+      assessmentData.nineQ.q4 + assessmentData.nineQ.q5 + assessmentData.nineQ.q6 +
+      assessmentData.nineQ.q7 + assessmentData.nineQ.q8 + assessmentData.nineQ.q9;
+
+    if (assessmentData.nineQ.total < 7) {
+      assessmentData.nineQ.level = 'ไม่มีอาการหรือมีอาการน้อยมาก';
+    } else if (assessmentData.nineQ.total <= 12) {
+      assessmentData.nineQ.level = 'มีอาการระดับน้อย';
+    } else if (assessmentData.nineQ.total <= 18) {
+      assessmentData.nineQ.level = 'มีอาการระดับปานกลาง';
+    } else {
+      assessmentData.nineQ.level = 'มีอาการระดับรุนแรง';
+    }
+
+    document.getElementById('9q-score').textContent = assessmentData.nineQ.total;
+    const nineQMessage = document.getElementById('9q-message');
+    const nextStep = document.getElementById('9q-next-step');
+
+    nineQMessage.innerHTML = `
+        <h3>ผลประเมินภาวะซึมเศร้า (9Q)</h3>
+        <p>ระดับอาการ: ${assessmentData.nineQ.level}</p>
+        <p>คะแนนรวม: ${assessmentData.nineQ.total}</p>
+      `;
+
+    if (assessmentData.nineQ.total < 7) {
+      nextStep.innerHTML = `
+          <div class="result-message result-level-1">
+            <p>คุณสามารถจบการประเมินที่นี่ได้</p>
+          </div>
+        `;
+      document.getElementById('to-final-result-from-9q').style.display = 'inline-block';
+      document.getElementById('to-8q-page').style.display = 'none';
+    } else {
+      nextStep.innerHTML = `
+          <div class="result-message ${assessmentData.nineQ.total <= 12 ? 'result-level-2' : assessmentData.nineQ.total <= 18 ? 'result-level-3' : 'result-level-4'}">
+            <p>แบบประเมินเมื่อครู่บอกเราว่า...ตอนนี้คุณอาจกำลังเผชิญกับความรู้สึกเศร้าในระดับที่ไม่ง่ายนัก</p>
+            <p>เราอยากชวนคุณทำแบบประเมินต่อเพื่อประเมินแนวโน้มการฆ่าตัวตาย (8Q)</p>
+          </div>
+        `;
+      document.getElementById('to-final-result-from-9q').style.display = 'none';
+      document.getElementById('to-8q-page').style.display = 'inline-block';
+    }
+  }
+
+  // ฟังก์ชันคำนวณคะแนน 8Q
+  function calculate8QScore() {
+    assessmentData.eightQ.total = assessmentData.eightQ.q1 + assessmentData.eightQ.q2 + assessmentData.eightQ.q3 +
+      assessmentData.eightQ.q4 + assessmentData.eightQ.q5 + assessmentData.eightQ.q6 +
+      assessmentData.eightQ.q7 + assessmentData.eightQ.q8;
+
+    if (assessmentData.eightQ.total <= 8) {
+      assessmentData.eightQ.level = 'มีความเสี่ยงน้อย';
+    } else if (assessmentData.eightQ.total <= 16) {
+      assessmentData.eightQ.level = 'มีความเสี่ยงปานกลาง';
+    } else {
+      assessmentData.eightQ.level = 'มีความเสี่ยงสูง';
+    }
+
+    document.getElementById('8q-score').textContent = assessmentData.eightQ.total;
+    const eightQMessage = document.getElementById('8q-message');
+
+    eightQMessage.innerHTML = `
+        <h3>ผลประเมินแนวโน้มการฆ่าตัวตาย (8Q)</h3>
+        <p>ระดับความเสี่ยง: ${assessmentData.eightQ.level}</p>
+        <p>คะแนนรวม: ${assessmentData.eightQ.total}</p>
+      `;
+
+    if (assessmentData.eightQ.total > 16) {
+      eightQMessage.innerHTML += `
+          <p style="color: var(--accent-color); font-weight: bold;">
+            เราขอแนะนำให้คุณพบผู้เชี่ยวชาญเพื่อรับคำปรึกษาและความช่วยเหลือทันที
+          </p>
+        `;
+    }
+  }
+
+  // ฟังก์ชันแสดงผลลัพธ์สรุป
+  function showFinalResult() {
+    const finalResult = document.getElementById('final-result-content');
+    let resultHTML = '';
+
+    // แสดงผล ST-5
+    resultHTML += `
+        <div class="result-message ${assessmentData.st5.total <= 4 ? 'result-level-1' : assessmentData.st5.total <= 7 ? 'result-level-2' : assessmentData.st5.total <= 9 ? 'result-level-3' : 'result-level-4'}">
+          <h3>ผลประเมินความเครียด (ST-5)</h3>
+          <p>ระดับความเครียด: ${assessmentData.st5.level}</p>
+          <p>คะแนนรวม: ${assessmentData.st5.total}</p>
+        </div>
+      `;
+
+    // แสดงผล 2Q ถ้ามี
+    if (assessmentData.twoQ.q1 !== undefined) {
+      resultHTML += `
+          <div class="result-message ${!assessmentData.twoQ.hasRisk ? 'result-level-1' : 'result-level-2'}">
+            <h3>ผลประเมินภาวะซึมเศร้าเบื้องต้น (2Q)</h3>
+            <p>${!assessmentData.twoQ.hasRisk ? 'ไม่พบสัญญาณภาวะซึมเศร้า' : 'พบสัญญาณภาวะซึมเศร้าเบื้องต้น'}</p>
+          </div>
+        `;
+    }
+
+    // แสดงผล 9Q ถ้ามี
+    if (assessmentData.nineQ.q1 !== undefined) {
+      resultHTML += `
+          <div class="result-message ${assessmentData.nineQ.total < 7 ? 'result-level-1' : assessmentData.nineQ.total <= 12 ? 'result-level-2' : assessmentData.nineQ.total <= 18 ? 'result-level-3' : 'result-level-4'}">
+            <h3>ผลประเมินภาวะซึมเศร้า (9Q)</h3>
+            <p>ระดับอาการ: ${assessmentData.nineQ.level}</p>
+            <p>คะแนนรวม: ${assessmentData.nineQ.total}</p>
+          </div>
+        `;
+    }
+
+    // แสดงผล 8Q ถ้ามี
+    if (assessmentData.eightQ.q1 !== undefined) {
+      resultHTML += `
+          <div class="result-message ${assessmentData.eightQ.total <= 8 ? 'result-level-1' : assessmentData.eightQ.total <= 16 ? 'result-level-2' : 'result-level-4'}">
+            <h3>ผลประเมินแนวโน้มการฆ่าตัวตาย (8Q)</h3>
+            <p>ระดับความเสี่ยง: ${assessmentData.eightQ.level}</p>
+            <p>คะแนนรวม: ${assessmentData.eightQ.total}</p>
+          </div>
+        `;
+    }
+
+    // แสดงคำแนะนำตามระดับความเสี่ยง
+    if (assessmentData.eightQ.q1 !== undefined && assessmentData.eightQ.total > 16) {
+      resultHTML += `
+          <div class="result-message result-level-4">
+            <h3>คำแนะนำ</h3>
+            <p>จากผลประเมิน เราขอแนะนำให้คุณพบผู้เชี่ยวชาญด้านสุขภาพจิตทันที</p>
+            <p>คุณไม่ได้อยู่คนเดียว และมีความช่วยเหลือพร้อมสนับสนุนคุณเสมอ</p>
+          </div>
+        `;
+    } else if (assessmentData.nineQ.q1 !== undefined && assessmentData.nineQ.total > 12) {
+      resultHTML += `
+          <div class="result-message result-level-3">
+            <h3>คำแนะนำ</h3>
+            <p>จากผลประเมิน เราขอแนะนำให้คุณปรึกษาผู้เชี่ยวชาญด้านสุขภาพจิต</p>
+            <p>การพูดคุยกับผู้เชี่ยวชาญสามารถช่วยให้คุณเข้าใจและจัดการกับความรู้สึกได้ดีขึ้น</p>
+          </div>
+        `;
+    } else if (assessmentData.st5.total > 7) {
+      resultHTML += `
+          <div class="result-message result-level-2">
+            <h3>คำแนะนำ</h3>
+            <p>คุณกำลังเผชิญกับความเครียดระดับสูง</p>
+            <p>ลองหาวิธีผ่อนคลายที่เหมาะกับคุณ เช่น การนั่งสมาธิ ออกกำลังกายเบาๆ หรือพูดคุยกับคนที่คุณไว้ใจ</p>
+          </div>
+        `;
+    } else {
+      resultHTML += `
+          <div class="result-message result-level-1">
+            <h3>คำแนะนำ</h3>
+            <p>คุณสามารถรับมือกับความเครียดได้ดี</p>
+            <p>แต่จำไว้ว่าการดูแลจิตใจเป็นสิ่งสำคัญ แม้ในวันที่คุณรู้สึกดี</p>
+          </div>
+        `;
+    }
+
+    finalResult.innerHTML = resultHTML;
+
+    // กำหนดปุ่มย้อนกลับที่เหมาะสม
+    if (assessmentData.eightQ.q1 !== undefined) {
+      document.getElementById('back-to-previous-result').onclick = () => showPage('8q-result-page');
+    } else if (assessmentData.nineQ.q1 !== undefined) {
+      document.getElementById('back-to-previous-result').onclick = () => showPage('9q-result-page');
+    } else if (assessmentData.twoQ.q1 !== undefined) {
+      document.getElementById('back-to-previous-result').onclick = () => showPage('2q-result-page');
+    } else {
+      document.getElementById('back-to-previous-result').onclick = () => showPage('st5-result-page');
+    }
+  }
+
+  // ฟังก์ชันรีเซ็ตแบบประเมิน
+  function resetAssessment() {
+    // รีเซ็ตข้อมูล
+    for (const key in assessmentData) {
+      if (typeof assessmentData[key] === 'object') {
+        for (const subKey in assessmentData[key]) {
+          if (Array.isArray(assessmentData[key][subKey])) {
+            assessmentData[key][subKey] = [];
+          } else if (typeof assessmentData[key][subKey] === 'number') {
+            assessmentData[key][subKey] = 0;
+          } else {
+            assessmentData[key][subKey] = null;
+          }
+        }
+      }
+    }
+
+    // รีเซ็ตฟอร์ม
+    document.querySelectorAll('input[type="text"], input[type="number"]').forEach(input => {
+      input.value = '';
+    });
+
+    document.querySelectorAll('select').forEach(select => {
+      select.selectedIndex = 0;
+    });
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      checkbox.checked = false;
+    });
+
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+
+    document.querySelectorAll('.feeling-option').forEach(option => {
+      option.classList.remove('selected');
+    });
+
+    // กลับไปหน้าแรก
+    showPage('welcome-page');
+  }
+
+  // Event Listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    // ควบคุมเพลงพื้นหลัง
+    const bgMusic = document.getElementById('bg-music');
+    const musicControl = document.getElementById('music-control');
+    let isMusicPlaying = false;
+
+    musicControl.addEventListener('click', () => {
+      if (isMusicPlaying) {
+        bgMusic.pause();
+        musicControl.innerHTML = '<i class="fas fa-music"></i>';
+      } else {
+        bgMusic.play();
+        musicControl.innerHTML = '<i class="fas fa-pause"></i>';
+      }
+      isMusicPlaying = !isMusicPlaying;
+    });
+
+    // ปุ่มเริ่มทำแบบประเมิน
+    document.getElementById('start-btn').addEventListener('click', () => {
+      showPage('personal-info-page');
+    });
+
+    // ปุ่มย้อนกลับไปหน้าแรก
+    document.getElementById('back-to-welcome').addEventListener('click', () => {
+      showPage('welcome-page');
+    });
+
+    // หน้าข้อมูลส่วนตัว
+    document.getElementById('to-next-personal').addEventListener('click', () => {
+      const nickname = document.getElementById('nickname').value.trim();
+      if (nickname) {
+        assessmentData.personalInfo.nickname = nickname;
+        showPage('personal-age-page');
+      } else {
+        alert('กรุณากรอกชื่อเล่นหรือนามแฝง');
+      }
+    });
+
+    document.getElementById('back-to-personal-info').addEventListener('click', () => {
+      showPage('personal-info-page');
+    });
+
+    document.getElementById('to-gender-page').addEventListener('click', () => {
+      const age = document.getElementById('age').value.trim();
+      if (age && !isNaN(age)) {
+        assessmentData.personalInfo.age = age;
+        showPage('gender-page');
+      } else {
+        alert('กรุณากรอกอายุเป็นตัวเลข');
+      }
+    });
+
+    document.getElementById('back-to-age-page').addEventListener('click', () => {
+      showPage('personal-age-page');
+    });
+
+    document.getElementById('to-occupation-page').addEventListener('click', () => {
+      const gender = document.getElementById('gender').value;
+      if (gender) {
+        assessmentData.personalInfo.gender = gender;
+        showPage('occupation-page');
+      } else {
+        alert('กรุณาเลือกเพศที่คุณรู้สึก');
+      }
+    });
+
+    document.getElementById('back-to-gender-page').addEventListener('click', () => {
+      showPage('gender-page');
+    });
+
+    document.getElementById('to-reflection-page').addEventListener('click', () => {
+      const occupation = document.getElementById('occupation').value.trim();
+      if (occupation) {
+        assessmentData.personalInfo.occupation = occupation;
+        showPage('reflection-page');
+      } else {
+        alert('กรุณากรอกสิ่งที่คุณทำเป็นหลักในช่วงนี้');
+      }
+    });
+
+    document.getElementById('back-to-occupation-page').addEventListener('click', () => {
+      showPage('occupation-page');
+    });
+
+    // ส่วนสะท้อนความรู้สึก
+    document.querySelectorAll('.feeling-option').forEach(option => {
+      option.addEventListener('click', function () {
+        document.querySelectorAll('.feeling-option').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.reflection.selectedQuote = this.getAttribute('data-value');
+      });
+    });
+
+    document.getElementById('to-feeling-page').addEventListener('click', () => {
+      if (assessmentData.reflection.selectedQuote) {
+        showPage('feeling-page');
+      } else {
+        alert('กรุณาเลือกข้อความที่ตรงกับความรู้สึกของคุณ');
+      }
+    });
+
+    document.getElementById('back-to-reflection-page').addEventListener('click', () => {
+      showPage('reflection-page');
+    });
+
+    // ส่วนความรู้สึกขณะอ่านข้อความ
+    document.getElementById('to-st5-page1').addEventListener('click', () => {
+      const feelings = [];
+      document.querySelectorAll('input[name="feelings"]:checked').forEach(checkbox => {
+        feelings.push(checkbox.value);
+      });
+
+      if (feelings.length > 0) {
+        assessmentData.reflection.feelings = feelings;
+        showPage('st5-page1');
+      } else {
+        alert('กรุณาเลือกอย่างน้อย 1 ข้อ');
+      }
+    });
+
+    document.getElementById('back-to-feeling-page').addEventListener('click', () => {
+      showPage('feeling-page');
+    });
+
+    // ส่วน ST-5
+    document.querySelectorAll('#st5-page1 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#st5-page1 .option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.st5.q1 = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('to-st5-page2').addEventListener('click', () => {
+      if (assessmentData.st5.q1 !== null) {
+        showPage('st5-page2');
+      } else {
+        alert('กรุณาเลือกคำตอบ');
+      }
+    });
+
+    document.querySelectorAll('#st5-page2 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#st5-page2 .option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.st5.q2 = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('to-st5-page3').addEventListener('click', () => {
+      if (assessmentData.st5.q2 !== null) {
+        showPage('st5-page3');
+      } else {
+        alert('กรุณาเลือกคำตอบ');
+      }
+    });
+
+    document.querySelectorAll('#st5-page3 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#st5-page3 .option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.st5.q3 = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('to-st5-page4').addEventListener('click', () => {
+      if (assessmentData.st5.q3 !== null) {
+        showPage('st5-page4');
+      } else {
+        alert('กรุณาเลือกคำตอบ');
+      }
+    });
+
+    document.querySelectorAll('#st5-page4 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#st5-page4 .option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.st5.q4 = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('to-st5-page5').addEventListener('click', () => {
+      if (assessmentData.st5.q4 !== null) {
+        showPage('st5-page5');
+      } else {
+        alert('กรุณาเลือกคำตอบ');
+      }
+    });
+
+    document.querySelectorAll('#st5-page5 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#st5-page5 .option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        assessmentData.st5.q5 = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+    document.getElementById('to-st5-result').addEventListener('click', () => {
+      if (assessmentData.st5.q5 !== null) {
+        calculateST5Score();
+        showPage('st5-result-page');
+      } else {
+        alert('กรุณาเลือกคำตอบ');
+      }
+    });
+
+    document.getElementById('back-to-st5-page5').addEventListener('click', () => {
+      showPage('st5-page5');
+    });
+
+    // ส่วน 2Q
+    document.getElementById('to-2q-page').addEventListener('click', () => {
+      showPage('2q-page');
+    });
+
+    document.getElementById('back-to-st5-result-page').addEventListener('click', () => {
+      showPage('st5-result-page');
+    });
+
+    document.getElementById('2q1').addEventListener('change', function () {
+      assessmentData.twoQ.q1 = this.checked;
+    });
+
+    document.getElementById('2q2').addEventListener('change', function () {
+      assessmentData.twoQ.q2 = this.checked;
+    });
+
+    document.getElementById('to-2q-result').addEventListener('click', () => {
+      calculate2QScore();
+      showPage('2q-result-page');
+    });
+
+    document.getElementById('back-to-2q-page').addEventListener('click', () => {
+      showPage('2q-page');
+    });
+
+    // ส่วน 9Q
+    document.querySelectorAll('#9q-page .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const questionContainer = this.closest('.question-container');
+        const questionNumber = questionContainer.querySelector('.question-text').textContent.split('.')[0].trim();
+        questionContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        if (!assessmentData.nineQ) assessmentData.nineQ = {};
+        assessmentData.nineQ[`q${questionNumber}`] = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+
+    document.getElementById('to-9q-page2').addEventListener('click', () => {
+      if (assessmentData.nineQ.q1 !== null && assessmentData.nineQ.q2 !== null &&
+        assessmentData.nineQ.q3 !== null && assessmentData.nineQ.q4 !== null &&
+        assessmentData.nineQ.q5 !== null) {
+        showPage('9q-page2');
+      } else {
+        alert('กรุณาตอบคำถามทั้งหมดในหน้านี้');
+      }
+    });
+
+    document.querySelectorAll('#9q-page2 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const questionContainer = this.closest('.question-container');
+        const questionNumber = questionContainer.querySelector('.question-text').textContent.split('.')[0].trim();
+
+        questionContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+
+        this.classList.add('selected');
+        if (!assessmentData.nineQ) assessmentData.nineQ = {};
+        assessmentData.nineQ[`q${questionNumber}`] = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+
+    document.getElementById('to-9q-result').addEventListener('click', () => {
+      if (assessmentData.nineQ.q6 !== null && assessmentData.nineQ.q7 !== null &&
+        assessmentData.nineQ.q8 !== null && assessmentData.nineQ.q9 !== null) {
+        calculate9QScore();
+        showPage('9q-result-page');
+      } else {
+        alert('กรุณาตอบคำถามทั้งหมดในหน้านี้');
+      }
+    });
+
+    document.getElementById('back-to-9q-page').addEventListener('click', () => {
+      showPage('9q-page');
+    });
+
+    document.getElementById('back-to-9q-page2').addEventListener('click', () => {
+      showPage('9q-page2');
+    });
+
+    // ส่วน 8Q
+    document.querySelectorAll('#8q-page .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const questionContainer = this.closest('.question-container');
+        const questionNumber = questionContainer.querySelector('.question-text').textContent.split('.')[0].trim();
+        questionContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+
+        if (!assessmentData.eightQ) assessmentData.eightQ = {};
+        assessmentData.eightQ[`q${questionNumber}`] = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+
+    document.getElementById('to-8q-page2').addEventListener('click', () => {
+      if (assessmentData.eightQ.q1 !== null && assessmentData.eightQ.q2 !== null && assessmentData.eightQ.q3 !== null) {
+        showPage('8q-page2');
+      } else {
+        alert('กรุณาตอบคำถามทั้งหมดในหน้านี้');
+      }
+    });
+
+    // หน้าที่ 2
+    document.querySelectorAll('#8q-page2 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const questionContainer = this.closest('.question-container');
+        const questionNumber = questionContainer.querySelector('.question-text').textContent.split('.')[0].trim();
+        questionContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+        if (!assessmentData.eightQ) assessmentData.eightQ = {};
+        assessmentData.eightQ[`q${questionNumber}`] = parseInt(this.getAttribute('data-value'));
+      });
+    });
+    document.getElementById('to-8q-page3').addEventListener('click', () => {
+      const requiredQs = ['q4', 'q5', 'q6'];
+      const isAnswered = requiredQs.every(q => assessmentData.eightQ && assessmentData.eightQ[q] != null);
+
+      if (isAnswered) {
+        showPage('8q-page3');
+      } else {
+        alert('กรุณาตอบคำถามทั้งหมดในหน้านี้');
+      }
+    });
+
+    // หน้าที่ 3
+    document.querySelectorAll('#8q-page3 .option-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const questionContainer = this.closest('.question-container');
+        const questionNumber = questionContainer.querySelector('.question-text').textContent.split('.')[0].trim();
+        questionContainer.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+
+        if (!assessmentData.eightQ) assessmentData.eightQ = {};
+        assessmentData.eightQ[`q${questionNumber}`] = parseInt(this.getAttribute('data-value'));
+      });
+    });
+
+
+    document.getElementById('to-8q-result').addEventListener('click', () => {
+      if (assessmentData.eightQ.q7 !== null && assessmentData.eightQ.q8 !== null) {
+        calculate8QScore();
+        showPage('8q-result-page');
+      } else {
+        alert('กรุณาตอบคำถามทั้งหมดในหน้านี้');
+      }
+    });
+
+    document.getElementById('back-to-8q-page').addEventListener('click', () => {
+      showPage('8q-page');
+    });
+
+    document.getElementById('back-to-8q-page2').addEventListener('click', () => {
+      showPage('8q-page2');
+    });
+
+    document.getElementById('back-to-8q-page3').addEventListener('click', () => {
+      showPage('8q-page3');
+    });
+
+    // ส่วนผลลัพธ์สรุป
+    document.getElementById('to-final-result').addEventListener('click', () => {
+      showFinalResult();
+      showPage('final-result-page');
+    });
+
+    document.getElementById('to-final-result-from-2q').addEventListener('click', () => {
+      showFinalResult();
+      showPage('final-result-page');
+    });
+
+    document.getElementById('to-final-result-from-9q').addEventListener('click', () => {
+      showFinalResult();
+      showPage('final-result-page');
+    });
+
+    document.getElementById('to-final-result-from-8q').addEventListener('click', () => {
+      showFinalResult();
+      showPage('final-result-page');
+    });
+
+    // ปุ่มเริ่มทำแบบประเมินใหม่
+    document.getElementById('restart-assessment').addEventListener('click', () => {
+      resetAssessment();
+    });
+
+    // เริ่มต้นแสดงหน้าแรก
+    showPage('welcome-page');
+  });
+</script>
+
+</body>
+
+</html>
