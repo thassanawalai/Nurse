@@ -10,7 +10,7 @@
       --secondary-color: #FFF2D6;
       --accent-color: #FF6B6B;
       --text-color: #FFFFFF;
-      --light-gray: rgba(255, 255, 255, 0.1);
+      --light-gray: rgba(255, 255, 255, 0.2);
       --border-radius: 12px;
       --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s ease;
@@ -26,7 +26,7 @@
       font-family: 'Prompt', 'Segoe UI', Tahoma, sans-serif;
       line-height: 1.6;
       color: var(--text-color);
-      background-image: url('C:\Users\Administrator\Desktop\mental-health-app\background.png');
+      background-image: url('background.png');
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
@@ -42,7 +42,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.3);
       z-index: -1;
     }
     
@@ -97,7 +97,6 @@
       padding: 25px;
       border-radius: var(--border-radius);
       margin-bottom: 20px;
-      border-left: 5px solid var(--primary-color);
       backdrop-filter: blur(5px);
       flex-grow: 1;
       display: flex;
@@ -110,6 +109,7 @@
       font-weight: 500;
       margin-bottom: 30px;
       color: var(--text-color);
+      font-family: 'Prompt'
     }
     
     .options-container {
@@ -146,6 +146,7 @@
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
+      font-family: 'Prompt';
     }
     
     .nav-btn {
@@ -155,6 +156,7 @@
       cursor: pointer;
       font-weight: 500;
       transition: var(--transition);
+      font-family: 'Prompt';
     }
     
     .prev-btn {
@@ -218,6 +220,7 @@
       border-radius: var(--border-radius);
       background-color: var(--light-gray);
       color: white;
+      font-family: 'Prompt';
       margin-bottom: 15px;
     }
     
@@ -225,6 +228,13 @@
       outline: none;
       border-color: var(--primary-color);
     }
+
+    select.form-input option {
+    background-color: #2d3b6b; /* เปลี่ยนสีพื้นหลัง */
+    color: white; /* เปลี่ยนสีตัวอักษร */
+    font-family: 'Prompt'; /* ให้ฟอนต์สอดคล้องกับส่วนอื่น */
+    }
+
     
     /* ผลลัพธ์ */
     .result-score {
@@ -315,6 +325,7 @@
     .result-level-1 {
       background-color: rgba(69, 94, 155, 0.3);
       border-left: 5px solid #4CAF50;
+      font-family: 'Prompt';
     }
     
     .result-level-2 {
@@ -331,6 +342,39 @@
       background-color: rgba(244, 67, 54, 0.3);
       border-left: 5px solid #F44336;
     }
+
+    #start-btn {
+    width: 100%;
+    padding: 16px 24px;
+    font-family: 'Prompt';
+    background: linear-gradient(135deg, #6B8DD6, #455E9B);
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  #start-btn i {
+    font-size: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  #start-btn:hover i {
+    transform: translateX(5px);
+  }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -338,7 +382,7 @@
 <body>
   <!-- เพลงพื้นหลัง -->
   <audio id="bg-music" loop>
-    <source src="C:\Users\Administrator\Desktop\mental-health-app\music.mp3" type="audio/mpeg">
+    <source src="music.mp3" type="audio/mpeg">
   </audio>
   
   <div class="music-control" id="music-control">
@@ -350,15 +394,15 @@
     <div class="page active" id="welcome-page">
       <div class="header">
         <h1>แบบประเมินสุขภาพจิต</h1>
-        <p>พื้นที่ปลอดภัยสำหรับการฟังเสียงภายในใจของคุณ</p>
+        <p style="margin-top: 10px; font-size: 22px;">พื้นที่ปลอดภัยสำหรับการฟังเสียงภายในใจของคุณ</p>
       </div>
       
       <div class="question-container">
-        <div style="text-align: center; margin: 20px 0;">
-          <i class="fas fa-heart" style="font-size: 60px; color: var(--accent-color);"></i>
+        <div style="text-align: center; margin: 50px 0;">
+          <i class="fas fa-heart" style="font-size: 80px; color: var(--accent-color);"></i>
         </div>
         
-        <p style="text-align: center; margin-bottom: 30px;">แบบประเมินนี้ไม่มีคำตอบที่ผิดหรือถูก เราอยากชวนคุณใช้เวลาสั้นๆ ในการทบทวนตัวเอง</p>
+        <p style="text-align: center; margin-bottom: 40px; font-size: 27px;">แบบประเมินนี้ไม่มีคำตอบที่ผิดหรือถูก เราอยากชวนคุณใช้เวลาสั้น ๆ <br/> ในการทบทวนตัวเอง</p>
         
         <button id="start-btn" class="next-btn" style="width: 100%;">
           เริ่มทำแบบประเมิน <i class="fas fa-arrow-right"></i>
