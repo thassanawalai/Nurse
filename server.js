@@ -48,6 +48,14 @@ app.post("/submit", async (req, res) => {
   }
 });
 
+app.use("/assets", express.static("assets"));
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
+
+const path = require("path");
+
+app.get("/", (req, res) => {
+  res.sendFile("st5.html", { root: __dirname });
 });
